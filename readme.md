@@ -23,8 +23,8 @@ Columbia is a Java project, running a Springboot server, who run a webserver. Th
 ## Through Docker
 1.	Download the file `Dockerfile` and `src/ressources/application.properties` , and copy them in a folder.
 2.	Edit the `application.properties` file with your own configuration
-3.	Run the Dockerfile: `docker build --no-cache -t=”columbia_api:latest” ./`
-4.	Create and run a container: `docker create --name=”columbia_api” -p 8080:8080 columbia_api:latest` 
+3.	Run the Dockerfile: `docker build --no-cache -t="columbia_api:latest" ./`
+4.	Create and run a container: `docker create --name="columbia_api" -p 8080:8080 columbia_api:latest` 
 ## Standalone (through a release)
 1.	Download the jarfile
 2.	Download file `src/ressources/application.properties`, edit him and copy him on the same directory than the jarfile
