@@ -50,6 +50,18 @@ public class Utilities {
     return str.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
   }
 
+  public static boolean isUpperCase(String s)
+  {
+    for (int i=0; i<s.length(); i++)
+    {
+      if (!Character.isUpperCase(s.charAt(i)))
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+
   public static boolean isEmptyOrNull(String str) {
     return (str == null || str.trim().equals(""));
   }

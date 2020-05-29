@@ -23,9 +23,24 @@ public interface TermRepository extends SearchablePagingAndSortingRepository<Col
   @Query("SELECT t FROM ColumbiaTerm t JOIN ColumbiaDefinition d ON d.term=t WHERE d.context=:context AND (t.name LIKE CONCAT(:string, '%') OR t.metaphone LIKE CONCAT(:metaphone, '%'))")
   Page<ColumbiaTerm> findByNameStartingWithAndMetaphoneStartingWithForSpecificContext(ColumbiaContext context, String string, String metaphone, Pageable pageable);
 
+
+
+  @Query("SELECT t FROM ColumbiaTerm t JOIN ColumbiaDefinition d ON d.term=t WHERE d.context=:context AND t.name LIKE :string ")
+  Page<ColumbiaTerm> findByNameForSpecificContext(ColumbiaContext context, String string, Pageable pageable);
+
+  @Query("SELECT t FROM ColumbiaTerm t JOIN ColumbiaDefinition d ON d.term=t WHERE d.context=:context AND t.name LIKE CONCAT(:string, '%')")
+  Page<ColumbiaTerm> findByNameStartingWithForSpecificContext(ColumbiaContext context, String string, Pageable pageable);
+
+
+
   Page<ColumbiaTerm> findAllByNameIgnoreCaseOrMetaphone(String name, String metaphone, Pageable pageable);
 
-  Page<ColumbiaTerm> findAllByNameStartingWithOrMetaphoneStartingWith(String name, String metaphone, Pageable pageable);
+  Page<ColumbiaTerm> findAllByNameIgnoreCase(String name, Pageable pageable);
+
+  Page<ColumbiaTerm> findAllByNameStartingWithIgnoreCaseOrMetaphoneStartingWith(String name, String metaphone, Pageable pageable);
+
+  Page<ColumbiaTerm> findAllByNameStartingWithIgnoreCase(String name, Pageable pageable);
+
 
   Page<ColumbiaTerm> findByAbbreviations(String abbr, Pageable pageable);
 

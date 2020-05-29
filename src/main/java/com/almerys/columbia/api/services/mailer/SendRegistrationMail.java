@@ -34,7 +34,7 @@ public class SendRegistrationMail {
   public String build(ColumbiaUser columbiaUser) {
     Context context = new Context();
     context.setVariable("username", columbiaUser.getUsername());
-    context.setVariable("url", columbiaConfiguration.getFrontURL() + "#/activate/"  + columbiaUser.getActivationKey());
+    context.setVariable("url", columbiaConfiguration.getFrontURL() + "activate/"  + columbiaUser.getActivationKey());
 
     return templateEngine.process("registrationMail", context);
   }
@@ -42,6 +42,7 @@ public class SendRegistrationMail {
   public void prepareAndSend(ColumbiaUser columbiaUser) {
     MimeMessagePreparator messagePreparator = mimeMessage -> {
       MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
+      messageHelper.setFrom("noreply@columbia.almerys.com");
       messageHelper.setTo(utilities.decryptEmail(columbiaUser.getEmail()));
       messageHelper.setSubject("Compte local créé - Columbia");
       String content = build(columbiaUser);

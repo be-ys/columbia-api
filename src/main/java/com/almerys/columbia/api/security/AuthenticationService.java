@@ -112,6 +112,8 @@ public class AuthenticationService {
     (new CustomUserDetails(columbiaUser)).getAuthorities().forEach(e -> collection.add(e.getAuthority()));
 
     map.put("rights", collection);
+    map.put("id", columbiaUser.getId());
+    map.put("username", columbiaUser.getUsername());
 
     String token = Jwts.builder()
                        .setClaims(map)

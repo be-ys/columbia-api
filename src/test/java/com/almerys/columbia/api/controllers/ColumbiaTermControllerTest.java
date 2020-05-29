@@ -45,7 +45,7 @@ public class ColumbiaTermControllerTest {
     //Doit retourner une 307 (random)
     when(utilities.getScheme()).thenReturn("http");
     when(service.getRandomTerm()).thenReturn(new ColumbiaTerm(4L, "essai"));
-    assertThat(controller.getTerms("random", PageRequest.of(0, 10), UriComponentsBuilder.newInstance())
+    assertThat(controller.getTerms("random", PageRequest.of(0, 10), Boolean.FALSE, UriComponentsBuilder.newInstance())
                          .getStatusCode()).isEqualTo(HttpStatus.TEMPORARY_REDIRECT);
 
     //Doit retourner une 200
@@ -55,15 +55,15 @@ public class ColumbiaTermControllerTest {
     columbiaTerms.add(columbiaTerm1);
     columbiaTerms.add(columbiaTerm2);
 
-    when(service.research(any(), any())).thenReturn(new PageImpl(columbiaTerms));
-    assertThat(controller.getTerms(null, PageRequest.of(0, 10), UriComponentsBuilder.newInstance())
+    when(service.research(any(), any(), any())).thenReturn(new PageImpl(columbiaTerms));
+    assertThat(controller.getTerms(null, PageRequest.of(0, 10), Boolean.FALSE, UriComponentsBuilder.newInstance())
                          .getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(controller.getTerms("coucou", PageRequest.of(0, 10), UriComponentsBuilder.newInstance())
+    assertThat(controller.getTerms("coucou", PageRequest.of(0, 10), Boolean.FALSE, UriComponentsBuilder.newInstance())
                          .getStatusCode()).isEqualTo(HttpStatus.OK);
 
     //Doit jeter une 400
-    when(service.research(any(), any())).thenThrow(IllegalArgumentException.class);
-    assertThatThrownBy(() -> controller.getTerms("coucou", PageRequest.of(0, 10), UriComponentsBuilder.newInstance())).isInstanceOf(
+    when(service.research(any(), any(), any())).thenThrow(IllegalArgumentException.class);
+    assertThatThrownBy(() -> controller.getTerms("coucou", PageRequest.of(0, 10), Boolean.FALSE, UriComponentsBuilder.newInstance())).isInstanceOf(
         IllegalArgumentException.class);
   }
 

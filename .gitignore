@@ -177,3 +177,4 @@ Temporary Items
 .directory
 
 /deploy/roles
+src/main/resources/application.properties

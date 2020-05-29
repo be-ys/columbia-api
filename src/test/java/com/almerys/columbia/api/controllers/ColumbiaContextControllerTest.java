@@ -63,8 +63,7 @@ public class ColumbiaContextControllerTest {
   @Test
   public void testGetTermsInContext() {
     //Doit retourner 200 si vide
-    when(contextService.research(any(), any(), any())).thenReturn(null);
-    assertThat(controller.getTermsInContext(4L, "", PageRequest.of(0, 10))
+    assertThat(controller.getTermsInContext(4L, "", Boolean.FALSE, PageRequest.of(0, 10))
                          .getStatusCode()).isEqualTo(HttpStatus.OK);
 
     //Doit retourner 200 et contenu si rempli.
@@ -74,13 +73,12 @@ public class ColumbiaContextControllerTest {
     columbiaTerms.add(columbiaTerm1);
     columbiaTerms.add(columbiaTerm2);
 
-    when(contextService.research(any(), any(), any())).thenReturn(new PageImpl<ColumbiaTerm>(columbiaTerms));
-    assertThat(controller.getTermsInContext(1L, "", PageRequest.of(0, 10))
+    assertThat(controller.getTermsInContext(1L, "", Boolean.FALSE,PageRequest.of(0, 10))
                          .getStatusCode()).isEqualTo(HttpStatus.OK);
 
     //Doit retourner une 400 si le service soulève une IAE
-    when(contextService.research(any(), any(), any())).thenThrow(IllegalArgumentException.class);
-    assertThatThrownBy(() -> controller.getTermsInContext(1L, "", PageRequest.of(0, 10))).isInstanceOf(IllegalArgumentException.class);
+    when(contextService.research(any(), any(), any(), any())).thenThrow(IllegalArgumentException.class);
+    assertThatThrownBy(() -> controller.getTermsInContext(1L, "", Boolean.FALSE,PageRequest.of(0, 10))).isInstanceOf(IllegalArgumentException.class);
   }
 
   //Teste le système de récupération de contexte.

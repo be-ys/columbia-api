@@ -1,6 +1,9 @@
 package com.almerys.columbia.api.controllers;
 
 import com.almerys.columbia.api.services.StatsService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 @RestController
+@Api(tags = "Stats Controller", description = "Get statistics from Columbia")
 public class StatsController extends AbstractRestController {
   private final StatsService statsService;
 
@@ -19,8 +23,9 @@ public class StatsController extends AbstractRestController {
   }
 
   //---------- GET
+  @ApiOperation(value = "Get stats for Columbia")
   @GetMapping(path = "/stats")
-  public ResponseEntity getStatsForSpecificContext() {
+  public ResponseEntity<Map<String, Long>> getStatsForSpecificContext() {
     Map<String, Long> response = statsService.getStats();
 
     return (response == null)
@@ -28,8 +33,9 @@ public class StatsController extends AbstractRestController {
         : ResponseEntity.ok(response);
   }
 
+  @ApiOperation(value = "Get stats from a specified context")
   @GetMapping(path = { "/contexts/{contextId}/stats", "/stats/contexts/{contextId}" })
-  public ResponseEntity getStatsForSpecificContext(@PathVariable @Validated @NotNull Long contextId) {
+  public ResponseEntity<Map<String, Long>> getStatsForSpecificContext(@ApiParam(value = "Id of the context", required = true) @PathVariable @Validated @NotNull Long contextId) {
     Map<String, Long> response = statsService.getStatsForContext(contextId);
 
     return (response == null)

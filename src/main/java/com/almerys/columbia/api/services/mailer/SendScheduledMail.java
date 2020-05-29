@@ -55,7 +55,7 @@ public class SendScheduledMail {
   public String build(ColumbiaNewsletter columbiaNewsletter) {
     Context context = new Context();
     context.setVariable("email", utilities.decryptEmail(columbiaNewsletter.getEmail()));
-    context.setVariable("url", columbiaConfiguration.getFrontURL() + "#/newsletter/" + columbiaNewsletter.getToken());
+    context.setVariable("url", columbiaConfiguration.getFrontURL() + "newsletter/" + columbiaNewsletter.getToken());
 
     StringBuilder modifications = new StringBuilder();
 
@@ -106,6 +106,7 @@ public class SendScheduledMail {
       if (content != null) {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
           MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
+          messageHelper.setFrom("noreply@columbia.almerys.com");
           messageHelper.setTo(utilities.decryptEmail(n.getEmail()));
           messageHelper.setSubject("Newsletter - Récapitulatif de la semaine");
           messageHelper.setText(content, true);

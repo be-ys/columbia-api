@@ -35,7 +35,7 @@ public class SendWelcomeMail {
   public String build(ColumbiaNewsletter columbiaNewsletter) {
     Context context = new Context();
     context.setVariable("email", utilities.decryptEmail(columbiaNewsletter.getEmail()));
-    context.setVariable("url", columbiaConfiguration.getFrontURL() + "#/newsletter/" + columbiaNewsletter.getToken());
+    context.setVariable("url", columbiaConfiguration.getFrontURL() + "newsletter/" + columbiaNewsletter.getToken());
 
     StringBuilder contextes = new StringBuilder();
 
@@ -52,6 +52,7 @@ public class SendWelcomeMail {
   public void prepareAndSend(ColumbiaNewsletter columbiaNewsletter) {
     MimeMessagePreparator messagePreparator = mimeMessage -> {
       MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
+      messageHelper.setFrom("noreply@columbia.almerys.com");
       messageHelper.setTo(utilities.decryptEmail(columbiaNewsletter.getEmail()));
       messageHelper.setSubject("Inscription Newsletter");
       String content = build(columbiaNewsletter);
