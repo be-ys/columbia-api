@@ -48,5 +48,14 @@ public class AtomControllerTest {
 
     when(atomService.getLastModificationsAsAtomFeedForSpecificContext(any())).thenThrow(IllegalArgumentException.class);
     assertThatThrownBy(() -> atomController.getAtomFeedForSpecificContext(4L)).isInstanceOf(IllegalArgumentException.class);
+
+  }
+
+  @Test
+  public void testSpecificContextNotFound() {
+
+    when(atomService.getLastModificationsAsAtomFeedForSpecificContext(any())).thenThrow(IndexOutOfBoundsException.class);
+    assertThat(atomController.getAtomFeedForSpecificContext(4L)
+            .getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 }

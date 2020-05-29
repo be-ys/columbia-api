@@ -1,6 +1,7 @@
 package com.almerys.columbia.api.controllers;
 
 import com.almerys.columbia.api.ColumbiaConfiguration;
+import com.almerys.columbia.api.domain.dto.DTOConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -34,16 +35,16 @@ public class ConfigControllerTest {
 
     assertThat(configController.getConfiguration().getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    Map<String, Object> content = new HashMap<>();
+    DTOConfig config = new DTOConfig();
 
-    content.put("adminRole", "Admin");
-    content.put("moderatorRole", "Moderator");
-    content.put("userRole", "User");
-    content.put("maxContextLevel", 3);
-    content.put("delegatedAuth", true);
-    content.put("openRegistration", true);
+    config.adminRole = columbiaConfiguration.getAdminRoleName();
+    config.moderatorRole = columbiaConfiguration.getModeratorRoleName();
+    config.userRole = columbiaConfiguration.getUserRoleName();
+    config.maxContextLevel = columbiaConfiguration.getMaxContextLevel();
+    config.delegatedAuth = columbiaConfiguration.getDelegatedAuthentication();
+    config.openRegistration = columbiaConfiguration.getOpenRegistration();
 
-    assertThat(configController.getConfiguration().getBody()).isEqualToComparingFieldByFieldRecursively(content);
+    assertThat(configController.getConfiguration().getBody()).isEqualToComparingFieldByFieldRecursively(config);
 
   }
 

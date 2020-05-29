@@ -1,6 +1,9 @@
 package com.almerys.columbia.api.controllers;
 
 import com.almerys.columbia.api.ColumbiaConfiguration;
+import com.almerys.columbia.api.domain.dto.DTOConfig;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -8,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+@Api(tags = "Configuration Controller", description = "Controller to get configuration from the server")
 @RestController
 public class ConfigController extends AbstractRestController {
   private final ColumbiaConfiguration columbiaConfiguration;
@@ -17,17 +21,19 @@ public class ConfigController extends AbstractRestController {
   }
 
   //---------- GET
+  @ApiOperation(value = "Get configuration")
   @GetMapping(path = "/config")
-  public ResponseEntity getConfiguration() {
-    Map<String, Object> response = new HashMap<>();
-    response.put("adminRole", columbiaConfiguration.getAdminRoleName());
-    response.put("moderatorRole", columbiaConfiguration.getModeratorRoleName());
-    response.put("userRole", columbiaConfiguration.getUserRoleName());
-    response.put("maxContextLevel", columbiaConfiguration.getMaxContextLevel());
-    response.put("delegatedAuth", columbiaConfiguration.getDelegatedAuthentication());
-    response.put("openRegistration", columbiaConfiguration.getOpenRegistration());
+  public ResponseEntity<DTOConfig> getConfiguration() {
+    DTOConfig config = new DTOConfig();
 
-    return ResponseEntity.ok(response);
+    config.adminRole = columbiaConfiguration.getAdminRoleName();
+    config.moderatorRole = columbiaConfiguration.getModeratorRoleName();
+    config.userRole = columbiaConfiguration.getUserRoleName();
+    config.maxContextLevel = columbiaConfiguration.getMaxContextLevel();
+    config.delegatedAuth = columbiaConfiguration.getDelegatedAuthentication();
+    config.openRegistration = columbiaConfiguration.getOpenRegistration();
+
+    return ResponseEntity.ok(config);
   }
 
 }

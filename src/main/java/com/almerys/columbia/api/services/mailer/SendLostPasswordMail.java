@@ -34,7 +34,7 @@ public class SendLostPasswordMail {
   public String build(ColumbiaUser columbiaUser) {
     Context context = new Context();
     context.setVariable("username", columbiaUser.getUsername());
-    context.setVariable("url", columbiaConfiguration.getFrontURL() + "#/lostPassword/"  + columbiaUser.getActivationKey());
+    context.setVariable("url", columbiaConfiguration.getFrontURL() + "lostPassword/"  + columbiaUser.getActivationKey());
 
     return templateEngine.process("lostPasswordMail", context);
   }
@@ -42,6 +42,7 @@ public class SendLostPasswordMail {
   public void prepareAndSend(ColumbiaUser columbiaUser) {
     MimeMessagePreparator messagePreparator = mimeMessage -> {
       MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
+      messageHelper.setFrom("noreply@columbia.almerys.com");
       messageHelper.setTo(utilities.decryptEmail(columbiaUser.getEmail()));
       messageHelper.setSubject("Réinitialisation de mot de passe");
       String content = build(columbiaUser);

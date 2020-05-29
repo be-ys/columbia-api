@@ -4,6 +4,9 @@ import com.almerys.columbia.api.domain.ColumbiaNewsletter;
 import com.almerys.columbia.api.domain.dto.NewsletterUpdater;
 import com.almerys.columbia.api.services.NewsletterService;
 import com.almerys.columbia.api.services.Utilities;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.constraints.NotNull;
 
+@Api(tags = "Newsletter Controller", description = "Controller to display and update informations about newsletter subscription")
 @RestController
 @RequestMapping("/newsletters")
 public class NewsletterController extends AbstractRestController {
@@ -33,8 +37,9 @@ public class NewsletterController extends AbstractRestController {
 
   //---------- GET
   //Récupère le statut d'inscription de l'email.
+  @ApiOperation(value = "Check enrolment status of a token, and their subscribed contexts")
   @GetMapping(value = "/{token}")
-  public ResponseEntity getNewsletter(@NotNull @PathVariable("token") String token) {
+  public ResponseEntity<ColumbiaNewsletter> getNewsletter(@NotNull @PathVariable("token") String token) {
     ColumbiaNewsletter result = service.getByToken(token);
 
     return (result == null)
@@ -44,8 +49,9 @@ public class NewsletterController extends AbstractRestController {
 
   //---------- POST
   //Inscrit une adresse mail.
+  @ApiOperation(value = "Post a new enrolment for an email, and an associated list of contexts")
   @PostMapping(value = { "/", "" })
-  public ResponseEntity createNewsletter(@NotNull @Validated @RequestBody NewsletterUpdater updater, UriComponentsBuilder ucb) {
+  public ResponseEntity<Void> createNewsletter(@NotNull @Validated @RequestBody NewsletterUpdater updater, UriComponentsBuilder ucb) {
     ColumbiaNewsletter result = service.createFromUpdater(updater);
     ucb = ucb.scheme(utilities.getScheme());
 
@@ -57,8 +63,9 @@ public class NewsletterController extends AbstractRestController {
 
   //---------- PUT
   //Met à jour une adresse mail.
+  @ApiOperation(value = "Update a subscription")
   @PutMapping(value = "/{token}")
-  public ResponseEntity updateNewsletter(@NotNull @Validated @RequestBody NewsletterUpdater updater,
+  public ResponseEntity<Void> updateNewsletter(@NotNull @Validated @RequestBody NewsletterUpdater updater,
       @PathVariable @NotNull String token) {
 
     ColumbiaNewsletter result = service.update(updater, token);
@@ -70,6 +77,7 @@ public class NewsletterController extends AbstractRestController {
 
   //---------- DELETE
   //Supprime tout les enregistrements d'une adresse mail.
+  @ApiOperation(value = "Delete a subscription")
   @DeleteMapping(value = "/{token}")
   public ResponseEntity<Void> removeNewsletter(@NotNull @PathVariable("token") String token) {
     service.deleteFromToken(token);

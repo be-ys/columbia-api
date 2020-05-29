@@ -13,6 +13,8 @@ import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.HashSet;
 
+import static com.almerys.columbia.api.services.Utilities.isUpperCase;
+
 @Service
 public class TermService {
   private final TermRepository repository;
@@ -32,7 +34,11 @@ public class TermService {
     return random;
   }
 
-  public Page research(String name, Pageable pageable) {
+  public Page<ColumbiaTerm> research(String name, Pageable pageable) {
+    return research(name, Boolean.FALSE, pageable);
+  }
+
+  public Page<ColumbiaTerm> research(String name, Boolean disableMetaphone, Pageable pageable) {
     if (name == null || name.isEmpty()) {
       return getAll(pageable);
     }
@@ -41,19 +47,39 @@ public class TermService {
     Metaphone meta = new Metaphone();
     meta.setMaxCodeLen(10);
 
+    Page list=null;
+    boolean isStart=false;
 
-    Page list = (name.endsWith("*"))
-        ? repository.findAllByNameStartingWithOrMetaphoneStartingWith(name.substring(0, name.length() - 2), meta.metaphone(name.substring(0, name.length() - 2)), pageable)
-        : repository.findAllByNameIgnoreCaseOrMetaphone(name, meta.metaphone(name), pageable);
-
-    if (list.getContent().isEmpty() && pageable.getPageNumber() == 0) {
-      return repository.findByAbbreviations(name, pageable);
-    } else {
-      return list;
+    if(name.endsWith("*")) {
+      name=name.substring(0, name.length() - 1);
+      isStart=true;
     }
+
+    if(isUpperCase(name) && pageable.getPageNumber() == 0){
+      list = repository.findByAbbreviations(name, pageable);
+    }
+
+    if(list==null || list.getTotalElements()==0) {
+      if(isStart){
+        if(disableMetaphone) {
+          list= repository.findAllByNameStartingWithIgnoreCase(name, pageable);
+        } else {
+          list= repository.findAllByNameStartingWithIgnoreCaseOrMetaphoneStartingWith(name, meta.metaphone(name), pageable);
+        }
+      } else {
+        if(disableMetaphone || repository.findAllByNameIgnoreCase(name, pageable).getNumberOfElements() != 0) {
+          list= repository.findAllByNameIgnoreCase(name, pageable);
+        } else {
+          list= repository.findAllByNameIgnoreCaseOrMetaphone(name, meta.metaphone(name), pageable);
+        }
+      }
+    }
+
+    return list;
+
   }
 
-  public Page getAll(Pageable pageable) {
+  public Page<ColumbiaTerm> getAll(Pageable pageable) {
     return repository.findAll(pageable);
   }
 
@@ -110,4 +136,5 @@ public class TermService {
 
     repository.deleteById(id);
   }
+
 }

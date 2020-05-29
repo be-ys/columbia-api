@@ -1,4 +1,3 @@
-
 # Columbia API
 Columbia API is the server of the Columbia project. 
 
@@ -21,7 +20,7 @@ Columbia is a Java project, running a Springboot server, who run a webserver. Th
 
 # Installation
 ## Through Docker
-1.	Download the file `Dockerfile` and `src/ressources/application.properties` , and copy them in a folder.
+1.	Download the file `Dockerfile` and `src/ressources/application.properties` from the `docker` directory, and copy them in a folder.
 2.	Edit the `application.properties` file with your own configuration
 3.	Run the Dockerfile: `docker build --no-cache -t="columbia_api:latest" ./`
 4.	Create and run a container: `docker create --name="columbia_api" -p 8080:8080 columbia_api:latest` 

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import javax.transaction.Transactional;
 
+import static com.almerys.columbia.api.services.Utilities.isUpperCase;
+
 @Service
 public class ContextService {
   private final ContextRepository repository;
@@ -25,25 +27,53 @@ public class ContextService {
     this.columbiaConfiguration = columbiaConfiguration;
   }
 
-  public Page research(Long idcontext, String name, Pageable pageable) {
+    public Page<ColumbiaTerm> research(Long idcontext, String name, Pageable pageable) {
+        return research(idcontext, name, pageable, Boolean.FALSE);
+    }
+
+
+  public Page<ColumbiaTerm> research(Long idcontext, String name, Pageable pageable, Boolean disableMetaphone) {
     Assert.notNull(getById(idcontext), "ColumbiaContext does not exist");
 
     ColumbiaContext context = getById(idcontext);
 
-    Metaphone meta = new Metaphone();
-    meta.setMaxCodeLen(10);
+      name = (name == null) ? "" : name;
 
-    name = (name == null) ? "" : name;
+      if (name.isEmpty()) {
+          return termRepository.findForSpecificContext(context, pageable);
+      }
 
-    if (name.isEmpty()) {
-      return termRepository.findForSpecificContext(context, pageable);
-    }
+      //Metaphone
+      Metaphone meta = new Metaphone();
+      meta.setMaxCodeLen(10);
 
-    Page<ColumbiaTerm> list = (name.endsWith("*"))
-        ? termRepository.findByNameStartingWithAndMetaphoneStartingWithForSpecificContext(context, name.substring(0, name.length() - 2), meta.metaphone(name.substring(0, name.length() - 2)), pageable)
-        : termRepository.findByNameAndMetaphoneForSpecificContext(context, name, meta.metaphone(name), pageable);
+      Page<ColumbiaTerm> list;
+      boolean isStart=false;
 
-    return (list.getContent().isEmpty() && pageable.getPageNumber() == 0) ? termRepository.findByAbbreviations(name, pageable) : list;
+      if(isUpperCase(name)){
+          return termRepository.findByAbbreviations(name, pageable);
+      }
+
+      if(name.endsWith("*")) {
+          name=name.substring(0, name.length() - 1);
+          isStart=true;
+      }
+
+          if(isStart){
+              if(disableMetaphone) {
+                  list= termRepository.findByNameStartingWithForSpecificContext(context, name, pageable);
+              } else {
+                  list= termRepository.findByNameStartingWithAndMetaphoneStartingWithForSpecificContext(context, name, meta.metaphone(name), pageable);
+              }
+          } else {
+              if(disableMetaphone) {
+                  list= termRepository.findByNameForSpecificContext(context, name, pageable);
+              } else {
+                  list= termRepository.findByNameAndMetaphoneForSpecificContext(context, name, meta.metaphone(name), pageable);
+              }
+          }
+
+      return list;
   }
 
   public ColumbiaContext update(Long id, ContextUpdater contextUpdater) {

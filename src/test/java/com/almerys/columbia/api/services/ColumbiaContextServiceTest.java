@@ -97,10 +97,10 @@ public class ColumbiaContextServiceTest {
     //Doit retourner une liste d'abbréviation.
     when(termRepository.findByNameAndMetaphoneForSpecificContext(any(), any(), any(), any())).thenReturn(new PageImpl<>(new ArrayList<>()));
     when(termRepository.findByAbbreviations(any(), eq(PageRequest.of(0, 10)))).thenReturn(terms);
-    assertThat(service.research(4L, "bonjour", PageRequest.of(0, 10))
+    assertThat(service.research(4L, "BONJOUR", PageRequest.of(0, 10), Boolean.FALSE)
                       .getContent()).usingFieldByFieldElementComparator()
                                     .containsExactlyInAnyOrder(columbiaTerm1, columbiaTerm2, columbiaTerm3);
-    assertThat(service.research(4L, "bonjour", PageRequest.of(1, 10))
+    assertThat(service.research(4L, "bonjour", PageRequest.of(1, 10), Boolean.FALSE)
                       .isEmpty()).isTrue();
 
   }

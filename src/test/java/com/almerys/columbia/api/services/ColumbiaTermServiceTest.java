@@ -77,7 +77,7 @@ public class ColumbiaTermServiceTest {
     te.add(t3);
     terms = new PageImpl<>(te);
 
-    when(repository.findAllByNameStartingWithOrMetaphoneStartingWith(any(), any(), any())).thenReturn(terms);
+    when(repository.findAllByNameStartingWithIgnoreCaseOrMetaphoneStartingWith(any(), any(), any())).thenReturn(terms);
     assertThat(service.research("coucou*", PageRequest.of(0, 10))).usingFieldByFieldElementComparator()
                                                                   .containsExactlyInAnyOrder(t1, t2, t3);
     assertThat(service.research("coucou*", PageRequest.of(0, 10))).usingFieldByFieldElementComparator()
@@ -87,16 +87,9 @@ public class ColumbiaTermServiceTest {
     te.remove(t2);
     terms = new PageImpl<>(te);
 
-    when(repository.findAllByNameIgnoreCaseOrMetaphone(any(), any(), any())).thenReturn(terms);
+    when(repository.findAllByNameIgnoreCase(any(), any())).thenReturn(terms);
     assertThat(service.research("cou", PageRequest.of(0, 10))).usingFieldByFieldElementComparator()
                                                               .containsExactlyInAnyOrder(t1, t3);
-
-    //Recherche abbr
-    when(repository.findAllByNameIgnoreCaseOrMetaphone(any(), any(), any())).thenReturn(new PageImpl<>(new ArrayList<>()));
-    when(repository.findByAbbreviations(any(), eq(PageRequest.of(0, 10)))).thenReturn(terms);
-    assertThat(service.research("cou", PageRequest.of(0, 10))).containsExactlyInAnyOrder(t1, t3);
-    assertThat(service.research("cou", PageRequest.of(0, 12))).isNullOrEmpty();
-    assertThat(service.research("cou", PageRequest.of(1, 12))).isNullOrEmpty();
 
   }
 
